@@ -5,7 +5,6 @@ const ApiResponse = require("../traits/ApiResponse")
 
 /**
  * authenticate — verifies the JWT Bearer token in the Authorization header.
- * Sets req.user = decoded token payload { id, role }.
  */
 function authenticate(req, res, next) {
     const authHeader =

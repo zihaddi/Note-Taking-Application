@@ -9,7 +9,6 @@ const {generateToken} = require("../../config/jwt")
  * Note: JWT is stateless; "logout" is handled client-side by discarding the token.
  */
 class AuthService {
-  
     async register(data) {
         const existing = await userRepository.findByEmail(data.email)
         if (existing) {
@@ -35,7 +34,6 @@ class AuthService {
         return {user: safeUser, token}
     }
 
- 
     async login(credentials) {
         const user = await userRepository.findByEmailWithPassword(
             credentials.email,
@@ -67,7 +65,6 @@ class AuthService {
         return {user: safeUser, token}
     }
 
-   
     async adminLogin(credentials) {
         const result = await this.login(credentials)
         if (result.user.role !== "admin") {
@@ -78,7 +75,6 @@ class AuthService {
         return result
     }
 
-   
     async getProfile(userId) {
         return userRepository.findOrFail(userId)
     }

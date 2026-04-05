@@ -4,13 +4,9 @@ const ApiResponse = require("../../traits/ApiResponse")
 const postService = require("./post.service")
 
 /**
- * PostController — handles public post listing, user post CRUD, and admin post views.
+ * PostController
  */
 class PostController {
-    /**
-     * GET /api/posts
-     * List all published posts (visible to everyone — no auth required).
-     */
     async index(req, res) {
         try {
             const page = Math.max(1, parseInt(req.query.page) || 1)
@@ -41,10 +37,6 @@ class PostController {
         }
     }
 
-    /**
-     * GET /api/posts/:id
-     * Get a single published post (public).
-     */
     async show(req, res) {
         try {
             const post = await postService.getPostById(req.params.id)
@@ -59,10 +51,6 @@ class PostController {
         }
     }
 
-    /**
-     * GET /api/user/posts
-     * List authenticated user's own posts.
-     */
     async userIndex(req, res) {
         try {
             const page = Math.max(1, parseInt(req.query.page) || 1)
@@ -100,10 +88,6 @@ class PostController {
         }
     }
 
-    /**
-     * POST /api/user/posts
-     * Create a new post.
-     */
     async store(req, res) {
         try {
             const {title, content, tags, is_published} = req.body
@@ -129,10 +113,6 @@ class PostController {
         }
     }
 
-    /**
-     * PUT /api/user/posts/:id
-     * Update an existing post (owner only).
-     */
     async update(req, res) {
         try {
             const {title, content, tags, is_published} = req.body
@@ -152,10 +132,6 @@ class PostController {
         }
     }
 
-    /**
-     * DELETE /api/user/posts/:id
-     * Delete a post (owner only).
-     */
     async destroy(req, res) {
         try {
             await postService.deletePost(req.params.id, req.user.id)

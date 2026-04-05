@@ -17,11 +17,6 @@ class NoteService extends BaseService {
 
     /**
      * List notes owned by a user.
-     *
-     * @param {string} userId
-     * @param {object} filters
-     * @param {number} page
-     * @param {number} perPage
      */
     async getUserNotes(userId, filters = {}, page = 1, perPage = 15) {
         return noteRepository.getUserNotesPaginated(
@@ -34,10 +29,6 @@ class NoteService extends BaseService {
 
     /**
      * List all notes (admin view).
-     *
-     * @param {object} filters
-     * @param {number} page
-     * @param {number} perPage
      */
     async getAllNotes(filters = {}, page = 1, perPage = 15) {
         return noteRepository.getAllNotesPaginated(filters, page, perPage)
@@ -45,9 +36,6 @@ class NoteService extends BaseService {
 
     /**
      * Get a specific note owned by a user (throws 403 if not the owner).
-     *
-     * @param {string} noteId
-     * @param {string} userId
      */
     async getUserNote(noteId, userId) {
         const note = await noteRepository.findUserNote(noteId, userId)
@@ -61,9 +49,6 @@ class NoteService extends BaseService {
 
     /**
      * Create a new note for a user.
-     *
-     * @param {string} userId
-     * @param {{ title: string, content: string, tags?: string[], is_pinned?: boolean }} data
      */
     async createNote(userId, data) {
         return noteRepository.create({...data, userId})
@@ -71,10 +56,6 @@ class NoteService extends BaseService {
 
     /**
      * Update a note — only by its owner.
-     *
-     * @param {string} noteId
-     * @param {string} userId
-     * @param {object} data
      */
     async updateNote(noteId, userId, data) {
         const note = await noteRepository.findUserNote(noteId, userId)
@@ -88,9 +69,6 @@ class NoteService extends BaseService {
 
     /**
      * Delete a note — only by its owner.
-     *
-     * @param {string} noteId
-     * @param {string} userId
      */
     async deleteNote(noteId, userId) {
         const note = await noteRepository.findUserNote(noteId, userId)

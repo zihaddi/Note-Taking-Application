@@ -1,17 +1,11 @@
 "use strict"
 
 /**
- * ApiResponse — mirrors the ApiResponseTrait from the Laravel boilerplate.
- * Provides consistent JSON response helpers used across all controllers.
+ * ApiResponse
  */
 class ApiResponse {
     /**
      * Send a success response.
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
-     * @param {*} data
-     * @param {number} statusCode
      */
     static success(res, message, data = null, statusCode = 200) {
         return res.status(statusCode).json({
@@ -23,11 +17,6 @@ class ApiResponse {
 
     /**
      * Send an error response.
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
-     * @param {*} errors
-     * @param {number} statusCode
      */
     static error(res, message, errors = null, statusCode = 400) {
         const payload = {status: "error", message}
@@ -37,11 +26,6 @@ class ApiResponse {
 
     /**
      * Send a paginated response (mirrors paginatedResponse from ApiResponseTrait).
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
-     * @param {{ docs: any[], totalDocs: number, page: number, limit: number, totalPages: number }} paginator
-     * @param {object} permissions
      */
     static paginated(res, message, paginator, permissions = {}) {
         const {docs, totalDocs, page, limit, totalPages} = paginator
@@ -76,11 +60,6 @@ class ApiResponse {
 
     /**
      * Send a response with permissions attached.
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
-     * @param {*} data
-     * @param {object} permissions
      */
     static withPermissions(res, message, data, permissions = {}) {
         return res.status(200).json({
@@ -92,9 +71,6 @@ class ApiResponse {
 
     /**
      * 422 Validation error response.
-     *
-     * @param {import('express').Response} res
-     * @param {object} errors
      */
     static validationError(res, errors) {
         return this.error(res, "Validation failed", errors, 422)
@@ -102,9 +78,6 @@ class ApiResponse {
 
     /**
      * 404 Not found response.
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
      */
     static notFound(res, message = "Resource not found") {
         return this.error(res, message, null, 404)
@@ -112,9 +85,6 @@ class ApiResponse {
 
     /**
      * 401 Unauthorized response.
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
      */
     static unauthorized(res, message = "Unauthorized") {
         return this.error(res, message, null, 401)
@@ -122,9 +92,6 @@ class ApiResponse {
 
     /**
      * 403 Forbidden response.
-     *
-     * @param {import('express').Response} res
-     * @param {string} message
      */
     static forbidden(res, message = "Forbidden") {
         return this.error(res, message, null, 403)

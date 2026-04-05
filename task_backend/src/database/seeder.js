@@ -7,6 +7,9 @@ const {connectDB} = require("../config/database")
 const User = require("../modules/user/user.model")
 const Note = require("../modules/note/note.model")
 const Post = require("../modules/post/post.model")
+const Permission = require("../modules/permission/permission.model")
+const Role = require("../modules/role/role.model")
+const MenuItem = require("../modules/menu/menu.model")
 
 async function seed() {
     await connectDB()
@@ -15,6 +18,9 @@ async function seed() {
     await User.deleteMany({})
     await Note.deleteMany({})
     await Post.deleteMany({})
+    await Permission.deleteMany({})
+    await Role.deleteMany({})
+    await MenuItem.deleteMany({})
 
     console.log("[Seeder] Cleared existing data")
 
@@ -157,6 +163,85 @@ async function seed() {
     ])
 
     console.log("[Seeder] Created posts")
+
+    // ── RBAC: Permissions ────────────────────────────────────────────────────
+    const permissionDefs = [
+        // User management
+        { name: "View Users",       slug: "users.view",       module: "users",       action: "view"   },
+        { name: "Create Users",     slug: "users.create",     module: "users",       action: "create" },
+        { name: "Update Users",     slug: "users.update",     module: "users",       action: "update" },
+        { name: "Delete Users",     slug: "users.delete",     module: "users",       action: "delete" },
+        // Notes
+        { name: "View Notes",       slug: "notes.view",       module: "notes",       action: "view"   },
+        { name: "Create Notes",     slug: "notes.create",     module: "notes",       action: "create" },
+        { name: "Update Notes",     slug: "notes.update",     module: "notes",       action: "update" },
+        { name: "Delete Notes",     slug: "notes.delete",     module: "notes",       action: "delete" },
+        // Posts
+        { name: "View Posts",       slug: "posts.view",       module: "posts",       action: "view"   },
+        { name: "Create Posts",     slug: "posts.create",     module: "posts",       action: "create" },
+        { name: "Update Posts",     slug: "posts.update",     module: "posts",       action: "update" },
+        { name: "Delete Posts",     slug: "posts.delete",     module: "posts",       action: "delete" },
+        // Role management
+        { name: "Manage Roles",     slug: "roles.manage",     module: "roles",       action: "manage" },
+        // Permission management
+        { name: "Manage Permissions", slug: "permissions.manage", module: "permissions", action: "manage" },
+        // Menu management
+        { name: "Manage Menus",     slug: "menus.manage",     module: "menus",       action: "manage" },
+    ]
+
+    const createdPermissions = await Permission.insertMany(permissionDefs)
+    const permMap = {}
+    createdPermissions.forEach((p) => { permMap[p.slug] = p._id })
+
+    console.log("[Seeder] Created permissions")
+
+    // ── RBAC: Roles ──────────────────────────────────────────────────────────
+    const adminRole = await Role.create({
+        name: "Admin",
+        slug: "admin",
+        description: "Full system access",
+        permissions: createdPermissions.map((p) => p._id),
+        isSystem: true,
+    })
+
+    const userRole = await Role.create({
+        name: "User",
+        slug: "user",
+        description: "Standard authenticated user",
+        permissions: [
+            permMap["notes.view"],
+            permMap["notes.create"],
+            permMap["notes.update"],
+            permMap["notes.delete"],
+            permMap["posts.view"],
+            permMap["posts.create"],
+            permMap["posts.update"],
+            permMap["posts.delete"],
+        ],
+        isDefault: true,
+        isSystem: true,
+    })
+
+    console.log("[Seeder] Created roles")
+
+    // ── RBAC: Menu Items ─────────────────────────────────────────────────────
+    await MenuItem.insertMany([
+        // Admin section
+        { label: "Dashboard",        path: "/admin-panel",             icon: "lucide:layout-dashboard", roles: ["admin"], order: 1,  section: "admin" },
+        { label: "Users",            path: "/admin-panel/users",       icon: "lucide:users",            roles: ["admin"], order: 2,  section: "admin" },
+        { label: "Posts",            path: "/admin-panel/posts",       icon: "lucide:file-text",        roles: ["admin"], order: 3,  section: "admin" },
+        { label: "Notes",            path: "/admin-panel/notes",       icon: "lucide:notebook",         roles: ["admin"], order: 4,  section: "admin" },
+        { label: "Roles",            path: "/admin-panel/roles",       icon: "lucide:shield",           roles: ["admin"], order: 5,  section: "admin" },
+        { label: "Permissions",      path: "/admin-panel/permissions", icon: "lucide:key",              roles: ["admin"], order: 6,  section: "admin" },
+        { label: "Menu Manager",     path: "/admin-panel/menus",       icon: "lucide:menu",             roles: ["admin"], order: 7,  section: "admin" },
+        // User section
+        { label: "Dashboard",        path: "/user-panel",              icon: "lucide:layout-dashboard", roles: ["user"],  order: 1,  section: "user" },
+        { label: "My Posts",         path: "/user-panel/posts",        icon: "lucide:file-text",        roles: ["user"],  order: 2,  section: "user" },
+        { label: "My Notes",         path: "/user-panel/notes",        icon: "lucide:notebook",         roles: ["user"],  order: 3,  section: "user" },
+        { label: "Profile",          path: "/user-panel/profile",      icon: "lucide:user",             roles: ["user"],  order: 4,  section: "user" },
+    ])
+
+    console.log("[Seeder] Created menu items")
     console.log("\n[Seeder] ✓ Seeding complete!\n")
     console.log("Admin:  admin@example.com  /  Admin@123")
     console.log("Users:  alice@example.com  /  User@123")

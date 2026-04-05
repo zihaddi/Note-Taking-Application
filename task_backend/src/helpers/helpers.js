@@ -32,10 +32,6 @@ function generateOtp(length = 6) {
 
 /**
  * Format a permission string as "resource.action".
- *
- * @param {string} resource
- * @param {string} action
- * @returns {string}
  */
 function formatPermission(resource, action) {
     return `${resource}.${action}`

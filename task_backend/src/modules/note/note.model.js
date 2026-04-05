@@ -4,10 +4,6 @@ const mongoose = require("mongoose")
 
 /**
  * Note Model
- *
- * Indexes (using schema.index so they are visible during review):
- *  - userId: supports user listing their own notes (GET /user/notes)
- *  - { userId, _id }: composite — efficient for user fetching a specific note
  */
 const noteSchema = new mongoose.Schema(
     {
@@ -39,11 +35,10 @@ const noteSchema = new mongoose.Schema(
     },
 )
 
-// ── Indexes ────────────────────────────────────────────────────────────────
-// userId — supports listing a user's own notes (filtered by userId)
+// ── Indexes
 noteSchema.index({userId: 1})
 
-// Compound { userId, _id } — supports efficient single-note lookups for a user
+// Compound { userId, _id }
 noteSchema.index({userId: 1, _id: 1})
 
 const Note = mongoose.model("Note", noteSchema)

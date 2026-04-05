@@ -9,7 +9,7 @@ const noteController = require("./note.controller")
 
 const router = Router()
 
-// ── User note routes — /api/user/notes ─────────────────────────────────────
+// ── User note routes — /api/user/notes
 router.get("/user/notes", authenticate, requireUser, (req, res) =>
     noteController.index(req, res),
 )
@@ -67,7 +67,7 @@ router.delete(
     (req, res) => noteController.destroy(req, res),
 )
 
-// ── Admin note routes — /api/admin/notes ──────────────────────────────────
+// ── Admin note routes — /api/admin/notes
 router.get("/admin/notes", authenticate, requireAdmin, (req, res) =>
     noteController.adminIndex(req, res),
 )

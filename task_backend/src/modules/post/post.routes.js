@@ -9,7 +9,7 @@ const postController = require("./post.controller")
 
 const router = Router()
 
-// ── Public routes (no auth required) ─────────────────────────────────────
+// ── Public routes (no auth required) 
 router.get("/posts", (req, res) => postController.index(req, res))
 
 router.get(
@@ -18,7 +18,7 @@ router.get(
     (req, res) => postController.show(req, res),
 )
 
-// ── Authenticated user routes ─────────────────────────────────────────────
+// ── Authenticated user routes
 router.get("/user/posts", authenticate, requireUser, (req, res) =>
     postController.userIndex(req, res),
 )

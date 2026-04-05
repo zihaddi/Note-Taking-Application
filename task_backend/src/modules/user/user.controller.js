@@ -4,14 +4,10 @@ const ApiResponse = require("../../traits/ApiResponse")
 const userService = require("./user.service")
 
 /**
- * UserController — handles /api/admin/users routes.
- * Admin-only: list, create, update, delete users + aggregation endpoints.
+ * UserController 
+ 
  */
 class UserController {
-    /**
-     * GET /api/admin/users
-     * List all users with pagination.
-     */
     async index(req, res) {
         try {
             const page = Math.max(1, parseInt(req.query.page) || 1)
@@ -54,10 +50,6 @@ class UserController {
         }
     }
 
-    /**
-     * GET /api/admin/users/:id
-     * Get a specific user by ID.
-     */
     async show(req, res) {
         try {
             const user = await userService.getUserById(req.params.id)
@@ -72,10 +64,6 @@ class UserController {
         }
     }
 
-    /**
-     * POST /api/admin/users
-     * Create a new user.
-     */
     async store(req, res) {
         try {
             const {name, email, password, role, phone, bio, interests} =
@@ -105,10 +93,6 @@ class UserController {
         }
     }
 
-    /**
-     * PUT /api/admin/users/:id
-     * Update an existing user.
-     */
     async update(req, res) {
         try {
             const {name, email, password, role, status, phone, bio, interests} =
@@ -134,10 +118,6 @@ class UserController {
         }
     }
 
-    /**
-     * DELETE /api/admin/users/:id
-     * Delete a user.
-     */
     async destroy(req, res) {
         try {
             await userService.deleteUser(req.params.id)
@@ -152,11 +132,6 @@ class UserController {
         }
     }
 
-    /**
-     * GET /api/admin/users/interests
-     * Aggregation Scenario 1: Group users by interests.
-     * Uses exactly ONE collection.aggregate() call.
-     */
     async groupByInterests(req, res) {
         try {
             const result = await userService.getUsersGroupedByInterests()
@@ -176,10 +151,6 @@ class UserController {
         }
     }
 
-    /**
-     * GET /api/admin/users/:id/posts
-     * Aggregation Scenario 2: Get a user's posts via $lookup.
-     */
     async getUserPosts(req, res) {
         try {
             const postService = require("../post/post.service")
@@ -201,10 +172,6 @@ class UserController {
         }
     }
 
-    /**
-     * GET /api/user/profile
-     * Get authenticated user's own profile.
-     */
     async profile(req, res) {
         try {
             const user = await userService.getUserById(req.user.id)
@@ -223,10 +190,6 @@ class UserController {
         }
     }
 
-    /**
-     * PUT /api/user/profile
-     * Update authenticated user's own profile.
-     */
     async updateProfile(req, res) {
         try {
             const {name, phone, bio, interests} = req.body

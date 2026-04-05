@@ -30,4 +30,35 @@ const requireAdmin = authorize("admin")
  */
 const requireUser = authorize("user", "admin")
 
-module.exports = {authorize, requireAdmin, requireUser}
+/**
+ * requirePermission — check that the user's role has a specific permission slug.
+ */
+function requirePermission(permissionSlug) {
+    return async (req, res, next) => {
+        if (!req.user) {
+            return ApiResponse.unauthorized(res, "Authentication required")
+        }
+
+        try {
+            const Role = require("../modules/role/role.model")
+            const role = await Role.findOne({ slug: req.user.role })
+                .populate("permissions", "slug")
+                .lean()
+
+            if (!role) {
+                return ApiResponse.forbidden(res, "Role not found")
+            }
+
+            const hasPerm = role.permissions.some((p) => p.slug === permissionSlug)
+            if (!hasPerm) {
+                return ApiResponse.forbidden(res, `Missing permission: ${permissionSlug}`)
+            }
+
+            next()
+        } catch (err) {
+            return ApiResponse.error(res, "Permission check failed", null, 500)
+        }
+    }
+}
+
+module.exports = { authorize, requireAdmin, requireUser, requirePermission }

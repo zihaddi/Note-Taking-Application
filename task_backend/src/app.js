@@ -7,6 +7,9 @@ const authRoutes = require("./modules/auth/auth.routes")
 const userRoutes = require("./modules/user/user.routes")
 const noteRoutes = require("./modules/note/note.routes")
 const postRoutes = require("./modules/post/post.routes")
+const permissionRoutes = require("./modules/permission/permission.routes")
+const roleRoutes = require("./modules/role/role.routes")
+const menuRoutes = require("./modules/menu/menu.routes")
 
 const app = express()
 
@@ -20,9 +23,12 @@ app.get("/up", (_req, res) => res.json({status: "ok"}))
 
 // ── API Routes ──────────────────────────────────────────────────────────────
 app.use("/api/auth", authRoutes)
-app.use("/api", userRoutes) // handles /api/admin/users, /api/profile
-app.use("/api", noteRoutes) // handles /api/user/notes, /api/admin/notes
-app.use("/api", postRoutes) // handles /api/posts, /api/user/posts
+app.use("/api", userRoutes)
+app.use("/api", noteRoutes)
+app.use("/api", postRoutes)
+app.use("/api", permissionRoutes)
+app.use("/api", roleRoutes)
+app.use("/api", menuRoutes)
 
 // ── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((_req, res) => {

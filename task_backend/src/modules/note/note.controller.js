@@ -7,12 +7,8 @@ const noteService = require("./note.service")
  * NoteController — handles user and admin note operations.
  */
 class NoteController {
-    // ── User operations ────────────────────────────────────────────────────
+    // ── User operations
 
-    /**
-     * GET /api/user/notes
-     * List authenticated user's own notes (paginated).
-     */
     async index(req, res) {
         try {
             const page = Math.max(1, parseInt(req.query.page) || 1)
@@ -55,10 +51,6 @@ class NoteController {
         }
     }
 
-    /**
-     * GET /api/user/notes/:id
-     * Get a specific note owned by the authenticated user.
-     */
     async show(req, res) {
         try {
             const note = await noteService.getUserNote(
@@ -76,10 +68,6 @@ class NoteController {
         }
     }
 
-    /**
-     * POST /api/user/notes
-     * Create a new note.
-     */
     async store(req, res) {
         try {
             const {title, content, tags, is_pinned} = req.body
@@ -105,10 +93,6 @@ class NoteController {
         }
     }
 
-    /**
-     * PUT /api/user/notes/:id
-     * Update an existing note (owner only).
-     */
     async update(req, res) {
         try {
             const {title, content, tags, is_pinned} = req.body
@@ -128,10 +112,6 @@ class NoteController {
         }
     }
 
-    /**
-     * DELETE /api/user/notes/:id
-     * Delete a note (owner only).
-     */
     async destroy(req, res) {
         try {
             await noteService.deleteNote(req.params.id, req.user.id)
@@ -146,12 +126,8 @@ class NoteController {
         }
     }
 
-    // ── Admin operations ───────────────────────────────────────────────────
+    // ── Admin operations
 
-    /**
-     * GET /api/admin/notes
-     * List all notes across all users (admin view, paginated).
-     */
     async adminIndex(req, res) {
         try {
             const page = Math.max(1, parseInt(req.query.page) || 1)

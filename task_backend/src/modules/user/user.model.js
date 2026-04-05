@@ -4,10 +4,6 @@ const mongoose = require("mongoose")
 
 /**
  * User Model
- *
- * Indexes (using schema.index so they are visible during review):
- *  - email: unique lookup (login, profile fetch)
- *  - role:  supports admin.list-users query
  */
 const userSchema = new mongoose.Schema(
     {
@@ -40,10 +36,6 @@ const userSchema = new mongoose.Schema(
         phone: {type: String, default: null},
         bio: {type: String, default: null},
         avatar: {type: String, default: null},
-        /**
-         * interests — array of strings used in the "Group by Interests" aggregation.
-         * Example: ['chess', 'reading', 'coding']
-         */
         interests: {
             type: [String],
             default: [],

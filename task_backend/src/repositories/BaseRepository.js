@@ -5,18 +5,12 @@
  * Generic CRUD & pagination operations for a Mongoose model.
  */
 class BaseRepository {
-    /**
-     * @param {import('mongoose').Model} model - Mongoose model class
-     */
     constructor(model) {
         this.model = model
     }
 
     /**
      * Get all documents.
-     *
-     * @param {object} projection
-     * @returns {Promise<import('mongoose').Document[]>}
      */
     async all(projection = {}) {
         return this.model.find({}, projection).lean()
@@ -24,10 +18,6 @@ class BaseRepository {
 
     /**
      * Find a document by its _id.
-     *
-     * @param {string} id
-     * @param {object} projection
-     * @returns {Promise<import('mongoose').Document|null>}
      */
     async find(id, projection = {}) {
         return this.model.findById(id, projection).lean()
@@ -35,9 +25,6 @@ class BaseRepository {
 
     /**
      * Find a document by _id or throw a 404-like error.
-     *
-     * @param {string} id
-     * @returns {Promise<import('mongoose').Document>}
      */
     async findOrFail(id) {
         const doc = await this.model.findById(id).lean()
@@ -51,10 +38,6 @@ class BaseRepository {
 
     /**
      * Find first document matching the given criteria.
-     *
-     * @param {object} criteria
-     * @param {object} projection
-     * @returns {Promise<import('mongoose').Document|null>}
      */
     async findBy(criteria, projection = {}) {
         return this.model.findOne(criteria, projection).lean()
@@ -62,10 +45,6 @@ class BaseRepository {
 
     /**
      * Get all documents matching the given criteria.
-     *
-     * @param {object} criteria
-     * @param {object} projection
-     * @returns {Promise<import('mongoose').Document[]>}
      */
     async getBy(criteria, projection = {}) {
         return this.model.find(criteria, projection).lean()
@@ -73,9 +52,6 @@ class BaseRepository {
 
     /**
      * Create a new document.
-     *
-     * @param {object} data
-     * @returns {Promise<import('mongoose').Document>}
      */
     async create(data) {
         const doc = new this.model(data)
@@ -84,11 +60,6 @@ class BaseRepository {
 
     /**
      * Update a document by _id.
-     * Returns the updated document or null if not found.
-     *
-     * @param {string} id
-     * @param {object} data
-     * @returns {Promise<import('mongoose').Document|null>}
      */
     async update(id, data) {
         return this.model
@@ -102,9 +73,6 @@ class BaseRepository {
 
     /**
      * Delete (hard) a document by _id.
-     *
-     * @param {string} id
-     * @returns {Promise<boolean>}
      */
     async delete(id) {
         const result = await this.model.findByIdAndDelete(id)
@@ -114,13 +82,6 @@ class BaseRepository {
     /**
      * Paginate documents with optional filters.
      * Returns a paginator object compatible with ApiResponse.paginated().
-     *
-     * @param {object} filters    - { search, ...extraFilters }
-     * @param {string[]} searchFields - fields to apply full-text search on
-     * @param {number} page
-     * @param {number} limit
-     * @param {object} sort       - e.g. { createdAt: -1 }
-     * @returns {Promise<{ docs, totalDocs, page, limit, totalPages }>}
      */
     async getAllPaginated(
         filters = {},
@@ -153,10 +114,6 @@ class BaseRepository {
     /**
      * Build a Mongoose query object from filters.
      * Override in child classes for custom filter logic.
-     *
-     * @param {object} filters
-     * @param {string[]} searchFields
-     * @returns {object}
      */
     _buildQuery(filters = {}, searchFields = ["name"]) {
         const query = {}

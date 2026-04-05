@@ -13,9 +13,6 @@ class UserRepository extends BaseRepository {
 
     /**
      * Find a user by email (includes password field for auth comparison).
-     *
-     * @param {string} email
-     * @returns {Promise<object|null>}
      */
     async findByEmailWithPassword(email) {
         return User.findOne({email}).select("+password").lean()
@@ -23,9 +20,6 @@ class UserRepository extends BaseRepository {
 
     /**
      * Find a user by email (excludes password).
-     *
-     * @param {string} email
-     * @returns {Promise<object|null>}
      */
     async findByEmail(email) {
         return User.findOne({email}).lean()
@@ -33,11 +27,6 @@ class UserRepository extends BaseRepository {
 
     /**
      * Paginate users with role/search filters.
-     *
-     * @param {object} filters - { search, role, status }
-     * @param {number} page
-     * @param {number} limit
-     * @returns {Promise<object>}
      */
     async getAllPaginated(filters = {}, _searchFields, page = 1, limit = 15) {
         const query = {}

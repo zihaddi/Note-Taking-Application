@@ -4,12 +4,6 @@ const mongoose = require("mongoose")
 
 /**
  * Post Model
- * Posts are stored in a SEPARATE collection (different from Users).
- * This enables the $lookup aggregation (Scenario 2).
- *
- * Indexes (using schema.index so they are visible during review):
- *  - userId: supports listing a user's posts and the $lookup aggregation
- *  - _id is automatically indexed by MongoDB
  */
 const postSchema = new mongoose.Schema(
     {
@@ -41,7 +35,7 @@ const postSchema = new mongoose.Schema(
     },
 )
 
-// ── Indexes ────────────────────────────────────────────────────────────────
+// ── Indexes
 // userId — supports GET /user/posts (list user's own posts) and $lookup pipeline
 postSchema.index({userId: 1})
 

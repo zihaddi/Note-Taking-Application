@@ -5,7 +5,7 @@ const userRepository = require("./user.repository")
 const {hashPassword} = require("../../helpers/helpers")
 
 /**
- * UserService — business logic for user management.
+ * UserService
  */
 class UserService extends BaseService {
     constructor() {
@@ -18,10 +18,6 @@ class UserService extends BaseService {
 
     /**
      * List all users with pagination.
-     *
-     * @param {object} filters
-     * @param {number} page
-     * @param {number} perPage
      */
     async listUsers(filters = {}, page = 1, perPage = 15) {
         return this.getAllPaginated(filters, page, perPage)
@@ -29,8 +25,6 @@ class UserService extends BaseService {
 
     /**
      * Get a user by ID (throws 404 if not found).
-     *
-     * @param {string} id
      */
     async getUserById(id) {
         return userRepository.findOrFail(id)
@@ -38,8 +32,6 @@ class UserService extends BaseService {
 
     /**
      * Create a new user (admin action).
-     *
-     * @param {object} data - { name, email, password, role, interests }
      */
     async createUser(data) {
         const existing = await userRepository.findByEmail(data.email)
@@ -54,9 +46,6 @@ class UserService extends BaseService {
 
     /**
      * Update a user (admin action).
-     *
-     * @param {string} id
-     * @param {object} data
      */
     async updateUser(id, data) {
         if (data.password) {
@@ -73,8 +62,6 @@ class UserService extends BaseService {
 
     /**
      * Delete a user (admin action).
-     *
-     * @param {string} id
      */
     async deleteUser(id) {
         const deleted = await userRepository.delete(id)

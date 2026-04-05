@@ -13,12 +13,6 @@ class NoteRepository extends BaseRepository {
 
     /**
      * Paginate notes for a specific user.
-     *
-     * @param {string} userId
-     * @param {object} filters - { search, tags }
-     * @param {number} page
-     * @param {number} limit
-     * @returns {Promise<object>}
      */
     async getUserNotesPaginated(userId, filters = {}, page = 1, limit = 15) {
         const query = {userId}
@@ -60,11 +54,6 @@ class NoteRepository extends BaseRepository {
 
     /**
      * Paginate all notes (admin view).
-     *
-     * @param {object} filters - { search, userId }
-     * @param {number} page
-     * @param {number} limit
-     * @returns {Promise<object>}
      */
     async getAllNotesPaginated(filters = {}, page = 1, limit = 15) {
         const query = {}
@@ -101,10 +90,6 @@ class NoteRepository extends BaseRepository {
 
     /**
      * Find a note that belongs to a specific user.
-     *
-     * @param {string} noteId
-     * @param {string} userId
-     * @returns {Promise<object|null>}
      */
     async findUserNote(noteId, userId) {
         return Note.findOne({_id: noteId, userId}).lean()

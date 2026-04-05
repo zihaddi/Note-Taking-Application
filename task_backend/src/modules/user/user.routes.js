@@ -9,7 +9,7 @@ const userController = require("./user.controller")
 
 const router = Router()
 
-// ── Admin routes — /api/admin/users ─────────────────────────────────────────
+// ── Admin routes — /api/admin/users
 
 // Aggregation: must be defined BEFORE /:id routes to avoid param capture
 router.get("/admin/users/interests", authenticate, requireAdmin, (req, res) =>
@@ -98,7 +98,7 @@ router.delete(
     (req, res) => userController.destroy(req, res),
 )
 
-// ── User profile routes — /api/user/profile ──────────────────────────────
+// ── User profile routes — /api/user/profile
 router.get("/user/profile", authenticate, requireUser, (req, res) =>
     userController.profile(req, res),
 )
