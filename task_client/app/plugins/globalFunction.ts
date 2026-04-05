@@ -1,7 +1,3 @@
-/**
- * globalFunction plugin — provides globally available utility helpers.
- * Mirrors the globalFunction.ts plugin from the main boilerplate.
- */
 export default defineNuxtPlugin(() => {
     return {
         provide: {

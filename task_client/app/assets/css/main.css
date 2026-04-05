@@ -33,6 +33,25 @@
     .form-label {
         @apply block text-sm font-semibold text-gray-700 mb-1.5;
     }
+    /* Normalize PrimeVue Select / InputNumber height to match InputText with form-input */
+    .p-select.form-input {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        display: flex;
+        align-items: stretch;
+    }
+    .p-select.form-input .p-select-label {
+        padding-top: 0.625rem !important;
+        padding-bottom: 0.625rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+    }
+    .p-inputnumber.form-input {
+        @apply !p-0;
+    }
+    .p-inputnumber.form-input .p-inputtext {
+        @apply border-0 py-2.5 px-3.5 text-sm w-full rounded-xl focus:ring-2 focus:ring-emerald-500;
+    }
     .page-header {
         @apply mb-7;
     }

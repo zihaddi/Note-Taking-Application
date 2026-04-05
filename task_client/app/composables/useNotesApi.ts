@@ -14,9 +14,6 @@ const ADMIN_BASE = "/api/admin/notes"
  * useNotesApi — note CRUD operations.
  */
 export const useNotesApi = () => {
-    /**
-     * GET /api/user/notes
-     */
     async function getUserNotes(
         params: Record<string, any> = {},
     ): Promise<PaginatedResponse<Note>> {
@@ -24,25 +21,16 @@ export const useNotesApi = () => {
         return $fetchApi(`${BASE}${query ? "?" + query : ""}`, {method: "GET"})
     }
 
-    /**
-     * GET /api/user/notes/:id
-     */
     async function getNote(id: string): Promise<ApiResponse<Note>> {
         return $fetchApi(`${BASE}/${id}`, {method: "GET"})
     }
 
-    /**
-     * POST /api/user/notes
-     */
     async function createNote(
         data: CreateNoteData,
     ): Promise<ApiResponse<Note>> {
         return $fetchApi(BASE, {method: "POST", body: data})
     }
 
-    /**
-     * PUT /api/user/notes/:id
-     */
     async function updateNote(
         id: string,
         data: UpdateNoteData,
@@ -50,16 +38,10 @@ export const useNotesApi = () => {
         return $fetchApi(`${BASE}/${id}`, {method: "PUT", body: data})
     }
 
-    /**
-     * DELETE /api/user/notes/:id
-     */
     async function deleteNote(id: string): Promise<ApiResponse<null>> {
         return $fetchApi(`${BASE}/${id}`, {method: "DELETE"})
     }
 
-    /**
-     * GET /api/admin/notes — admin view of all notes
-     */
     async function adminGetAllNotes(
         params: Record<string, any> = {},
     ): Promise<PaginatedResponse<Note>> {

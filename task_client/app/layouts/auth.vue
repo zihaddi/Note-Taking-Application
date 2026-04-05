@@ -1,3 +1,13 @@
+<script setup lang="ts">
+const features = [
+    { icon: 'lucide:lock', text: 'Secure JWT authentication' },
+    { icon: 'lucide:layers', text: 'Role-based access control' },
+    { icon: 'lucide:database', text: 'MongoDB with aggregation' },
+    { icon: 'lucide:zap', text: 'Fast search & pagination' },
+];
+</script>
+
+
 <template>
     <div class="min-h-screen flex bg-white">
         <!-- Left branding panel (hidden on mobile) -->
@@ -43,12 +53,3 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-const features = [
-    { icon: 'lucide:lock', text: 'Secure JWT authentication' },
-    { icon: 'lucide:layers', text: 'Role-based access control' },
-    { icon: 'lucide:database', text: 'MongoDB with aggregation' },
-    { icon: 'lucide:zap', text: 'Fast search & pagination' },
-];
-</script>

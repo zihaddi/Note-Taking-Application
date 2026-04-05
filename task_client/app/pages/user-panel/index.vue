@@ -111,7 +111,7 @@ onMounted(async () => {
                             <Icon v-if="note.is_pinned" name="lucide:pin" class="text-emerald-400 text-xs" />
                             <span v-if="note.tags?.length"
                                 class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{
-                                note.tags[0] }}</span>
+                                    note.tags[0] }}</span>
                         </div>
                     </div>
                 </li>

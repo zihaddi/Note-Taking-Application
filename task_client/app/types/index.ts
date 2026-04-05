@@ -157,3 +157,106 @@ export interface UserWithPosts {
     email: string
     posts: Post[]
 }
+
+// ── RBAC Types ──────────────────────────────────────────────────────────────
+
+export type PermissionAction =
+    | "view"
+    | "create"
+    | "update"
+    | "delete"
+    | "manage"
+
+export interface Permission {
+    _id: string
+    name: string
+    slug: string
+    module: string
+    action: PermissionAction
+    description: string | null
+    createdAt: string
+    updatedAt: string
+}
+
+export interface PermissionGroup {
+    _id: string // module name
+    permissions: Permission[]
+}
+
+export interface CreatePermissionData {
+    name: string
+    module: string
+    action: PermissionAction
+    slug?: string
+    description?: string
+}
+
+export interface UpdatePermissionData {
+    name?: string
+    module?: string
+    action?: PermissionAction
+    description?: string
+}
+
+export interface Role {
+    _id: string
+    name: string
+    slug: string
+    description: string | null
+    permissions: Permission[]
+    isDefault: boolean
+    isSystem: boolean
+    createdAt: string
+    updatedAt: string
+}
+
+export interface CreateRoleData {
+    name: string
+    slug?: string
+    description?: string
+    permissions?: string[] // permission IDs
+    isDefault?: boolean
+}
+
+export interface UpdateRoleData {
+    name?: string
+    description?: string
+    permissions?: string[] // permission IDs
+    isDefault?: boolean
+}
+
+export interface MenuItem {
+    _id: string
+    label: string
+    path: string
+    icon: string
+    roles: string[]
+    order: number
+    isActive: boolean
+    parent: string | null
+    section: string
+    createdAt: string
+    updatedAt: string
+}
+
+export interface CreateMenuItemData {
+    label: string
+    path: string
+    icon?: string
+    roles?: string[]
+    order?: number
+    isActive?: boolean
+    parent?: string | null
+    section?: string
+}
+
+export interface UpdateMenuItemData {
+    label?: string
+    path?: string
+    icon?: string
+    roles?: string[]
+    order?: number
+    isActive?: boolean
+    parent?: string | null
+    section?: string
+}

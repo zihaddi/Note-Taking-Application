@@ -1,8 +1,5 @@
 import {authUser} from "~/composables/useAuth"
 
-/**
- * guest — redirect already-authenticated users away from auth pages.
- */
 export default defineNuxtRouteMiddleware((to) => {
     const user = authUser()
 

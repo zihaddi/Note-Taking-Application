@@ -116,7 +116,7 @@ onMounted(loadStats);
                             <td class="py-3 pr-4">
                                 <span :class="['badge', user.role === 'admin' ? 'badge-purple' : 'badge-blue']">{{
                                     user.role
-                                    }}</span>
+                                }}</span>
                             </td>
                             <td class="py-3">
                                 <span :class="['badge', user.status === 'active' ? 'badge-green' : 'badge-red']">{{

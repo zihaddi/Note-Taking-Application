@@ -13,9 +13,6 @@ type ResponseType = keyof ResponseMap | "json"
 /**
  * $fetchApi — wrapper around ofetch that attaches the JWT Bearer token.
  * Mirrors the $fetchAdmin / $fetchUser pattern from the main boilerplate.
- *
- * @param path    - URL path (relative to API_BASE_URL)
- * @param options - fetch options (method, body, headers, etc.)
  */
 export async function $fetchApi<T, R extends ResponseType = "json">(
     path: RequestInfo,
