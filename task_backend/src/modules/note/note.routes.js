@@ -3,14 +3,14 @@
 const {Router} = require("express")
 const {body, param} = require("express-validator")
 const {authenticate} = require("../../middleware/authenticate")
-const {requireAdmin, requireUser} = require("../../middleware/authorize")
+const {requireAdmin, requireUser, requirePermission} = require("../../middleware/authorize")
 const {validate} = require("../../middleware/validate")
 const noteController = require("./note.controller")
 
 const router = Router()
 
 // ── User note routes — /api/user/notes
-router.get("/user/notes", authenticate, requireUser, (req, res) =>
+router.get("/user/notes", authenticate, requireUser, requirePermission("notes.view"), (req, res) =>
     noteController.index(req, res),
 )
 
@@ -18,6 +18,7 @@ router.get(
     "/user/notes/:id",
     authenticate,
     requireUser,
+    requirePermission("notes.view"),
     [param("id").isMongoId().withMessage("Invalid note ID"), validate],
     (req, res) => noteController.show(req, res),
 )
@@ -26,6 +27,7 @@ router.post(
     "/user/notes",
     authenticate,
     requireUser,
+    requirePermission("notes.create"),
     [
         body("title").notEmpty().withMessage("Title is required").trim(),
         body("content").notEmpty().withMessage("Content is required"),
@@ -43,6 +45,7 @@ router.put(
     "/user/notes/:id",
     authenticate,
     requireUser,
+    requirePermission("notes.update"),
     [
         param("id").isMongoId().withMessage("Invalid note ID"),
         body("title")
@@ -63,6 +66,7 @@ router.delete(
     "/user/notes/:id",
     authenticate,
     requireUser,
+    requirePermission("notes.delete"),
     [param("id").isMongoId().withMessage("Invalid note ID"), validate],
     (req, res) => noteController.destroy(req, res),
 )
@@ -70,6 +74,14 @@ router.delete(
 // ── Admin note routes — /api/admin/notes
 router.get("/admin/notes", authenticate, requireAdmin, (req, res) =>
     noteController.adminIndex(req, res),
+)
+
+router.get(
+    "/admin/notes/:id",
+    authenticate,
+    requireAdmin,
+    [param("id").isMongoId().withMessage("Invalid note ID"), validate],
+    (req, res) => noteController.adminShow(req, res),
 )
 
 module.exports = router

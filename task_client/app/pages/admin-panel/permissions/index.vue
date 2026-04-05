@@ -122,15 +122,15 @@ onMounted(fetchPermissions);
         <Toast />
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
-                <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-1">
-                    <Icon name="lucide:key" class="text-sm" /> RBAC
-                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">RBAC</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Permissions</h1>
-                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">{{ meta.total }} total permissions</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> total permissions
+                </p>
             </div>
-            <Button label="Add Permission" icon="pi pi-plus" @click="openCreate" class="!rounded-xl" />
+            <Button label="Add Permission" icon="pi pi-plus" @click="openCreate" class="!rounded-xl !shadow-sm" />
         </div>
 
         <!-- Search -->
@@ -142,57 +142,48 @@ onMounted(fetchPermissions);
             </IconField>
         </div>
 
-        <!-- Table -->
-        <div class="card">
-            <div v-if="isLoading" class="space-y-3">
+        <!-- Table card -->
+        <div class="card !p-0 overflow-hidden">
+            <div v-if="isLoading" class="p-6 space-y-3">
                 <Skeleton v-for="i in 8" :key="i" height="3rem" class="rounded-xl" />
             </div>
 
-            <div v-else-if="permissions.length === 0" class="empty-state">
-                <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <Icon name="lucide:key" class="text-gray-400" style="font-size:1.5rem" />
+            <div v-else-if="permissions.length === 0" class="empty-state py-16">
+                <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Icon name="lucide:key" class="text-amber-400" style="font-size:1.5rem" />
                 </div>
-                <p class="text-sm font-medium text-gray-500">No permissions found</p>
+                <p class="text-sm font-semibold text-gray-500">No permissions found</p>
             </div>
 
             <div v-else class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="data-table">
                     <thead>
-                        <tr class="text-left border-b border-gray-100">
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
-                            <th
-                                class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">
-                                Slug</th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Module
-                            </th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Action
-                            </th>
-                            <th class="pb-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                        <tr>
+                            <th>Name</th>
+                            <th class="hidden sm:table-cell">Slug</th>
+                            <th>Module</th>
+                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="perm in permissions" :key="perm._id"
-                            class="border-b border-gray-50 hover:bg-gray-50/70 transition-colors group">
-                            <td class="py-3 pr-4 font-semibold text-gray-900">{{ perm.name }}</td>
-                            <td class="py-3 pr-4 text-gray-400 font-mono text-xs hidden sm:table-cell">{{ perm.slug }}
+                        <tr v-for="perm in permissions" :key="perm._id">
+                            <td class="font-semibold text-gray-900 text-sm">{{ perm.name }}</td>
+                            <td class="hidden sm:table-cell">
+                                <code class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg font-mono">{{ perm.slug }}</code>
                             </td>
-                            <td class="py-3 pr-4">
+                            <td>
                                 <span class="badge badge-gray">{{ perm.module }}</span>
                             </td>
-                            <td class="py-3 pr-4">
-                                <span :class="['badge', actionBadgeClass[perm.action] || 'badge-gray']">{{ perm.action
-                                    }}</span>
+                            <td>
+                                <span :class="['badge', actionBadgeClass[perm.action] || 'badge-gray']">{{ perm.action }}</span>
                             </td>
-                            <td class="py-3">
-                                <div class="flex gap-1">
-                                    <button @click="openEdit(perm)"
-                                        class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-gray-400 transition-colors"
-                                        title="Edit">
+                            <td>
+                                <div class="flex gap-1.5">
+                                    <button @click="openEdit(perm)" class="action-btn-edit" title="Edit">
                                         <Icon name="lucide:pencil" class="text-xs" />
                                     </button>
-                                    <button @click="handleDelete(perm)"
-                                        class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-50 hover:text-red-600 flex items-center justify-center text-gray-400 transition-colors"
-                                        title="Delete">
+                                    <button @click="handleDelete(perm)" class="action-btn-delete" title="Delete">
                                         <Icon name="lucide:trash-2" class="text-xs" />
                                     </button>
                                 </div>
@@ -203,7 +194,7 @@ onMounted(fetchPermissions);
             </div>
 
             <!-- Pagination -->
-            <div v-if="meta && meta.last_page > 1" class="flex justify-center mt-5">
+            <div v-if="meta && meta.last_page > 1" class="flex justify-center px-6 py-4 border-t border-gray-100">
                 <Paginator :rows="perPage" :totalRecords="meta.total" :first="(meta.current_page - 1) * perPage"
                     @page="(e: any) => { page = e.page + 1; fetchPermissions(); }" />
             </div>

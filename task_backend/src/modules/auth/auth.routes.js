@@ -66,6 +66,10 @@ router.get("/profile", authenticate, (req, res) =>
     authController.profile(req, res),
 )
 
+router.get("/my-permissions", authenticate, (req, res) =>
+    authController.myPermissions(req, res),
+)
+
 router.post("/logout", authenticate, (req, res) =>
     authController.logout(req, res),
 )

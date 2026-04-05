@@ -51,7 +51,13 @@ class PostService extends BaseService {
      * Get a single post by ID.
      */
     async getPostById(postId) {
-        return this.repository.findOrFail(postId)
+        const post = await postRepository.findByIdPopulated(postId)
+        if (!post) {
+            const err = new Error("Post not found")
+            err.statusCode = 404
+            throw err
+        }
+        return post
     }
 
     /**

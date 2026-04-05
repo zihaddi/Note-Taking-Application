@@ -39,15 +39,14 @@ onMounted(fetchNotes);
         <Toast />
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
-                <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-1">
-                    <Icon name="lucide:file-text" class="text-sm" /> Notes
-                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Content</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">All Notes</h1>
-                <p class="text-gray-500 text-sm mt-0.5">Read-only view of all user notes</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> total notes
+                </p>
             </div>
-            <span v-if="meta" class="badge badge-gray text-sm px-3 py-1">{{ meta.total }} total</span>
         </div>
 
         <!-- Search -->
@@ -63,16 +62,17 @@ onMounted(fetchNotes);
             <Skeleton v-for="i in 9" :key="i" height="11rem" class="rounded-2xl" />
         </div>
 
-        <div v-else-if="notes.length === 0" class="empty-state">
-            <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <div v-else-if="notes.length === 0" class="empty-state py-16">
+            <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Icon name="lucide:file-text" class="text-gray-400" style="font-size:1.5rem" />
             </div>
-            <p class="text-sm font-medium text-gray-500">No notes found</p>
+            <p class="text-sm font-semibold text-gray-500">No notes found</p>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="note in notes" :key="note._id" class="card group flex flex-col"
-                :class="note.is_pinned ? 'ring-1 ring-emerald-200' : ''">
+            <div v-for="note in notes" :key="note._id" class="card group flex flex-col relative overflow-hidden transition-all hover:shadow-md cursor-pointer"
+                :class="note.is_pinned ? 'ring-1 ring-emerald-200' : ''"
+                @click="$router.push(`/admin-panel/notes/${note._id}`)">
                 <div v-if="note.is_pinned"
                     class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
                 <div class="flex items-start justify-between mb-2">

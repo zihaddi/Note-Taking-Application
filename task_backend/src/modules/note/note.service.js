@@ -35,6 +35,19 @@ class NoteService extends BaseService {
     }
 
     /**
+     * Get any note by ID (admin view, no ownership check).
+     */
+    async getAnyNote(noteId) {
+        const note = await noteRepository.findByIdPopulated(noteId)
+        if (!note) {
+            const err = new Error("Note not found")
+            err.statusCode = 404
+            throw err
+        }
+        return note
+    }
+
+    /**
      * Get a specific note owned by a user (throws 403 if not the owner).
      */
     async getUserNote(noteId, userId) {

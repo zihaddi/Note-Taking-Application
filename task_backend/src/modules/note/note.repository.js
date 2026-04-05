@@ -92,7 +92,18 @@ class NoteRepository extends BaseRepository {
      * Find a note that belongs to a specific user.
      */
     async findUserNote(noteId, userId) {
-        return Note.findOne({_id: noteId, userId}).lean()
+        return Note.findOne({_id: noteId, userId})
+            .populate("userId", "name email")
+            .lean()
+    }
+
+    /**
+     * Find a note by ID with userId populated (admin view).
+     */
+    async findByIdPopulated(noteId) {
+        return Note.findById(noteId)
+            .populate("userId", "name email")
+            .lean()
     }
 }
 

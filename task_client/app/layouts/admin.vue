@@ -68,120 +68,121 @@ function isActiveRoute(to: string, exact = false) {
 
 
 <template>
-    <div class="flex h-screen bg-gray-50 overflow-hidden">
+    <div class="flex h-screen bg-slate-50 overflow-hidden">
         <!-- Sidebar -->
         <aside :class="[
-            'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 shadow-sm transform transition-transform duration-300 ease-in-out flex flex-col',
+            'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 transform transition-transform duration-300 ease-in-out flex flex-col',
             sidebarOpen ? 'translate-x-0' : '-translate-x-full',
             'md:relative md:translate-x-0'
         ]">
             <!-- Logo -->
-            <div class="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
-                <div
-                    class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center shadow-sm">
-                    <Icon name="lucide:shield-check" class="text-white text-lg" />
+            <div class="flex items-center gap-3 px-5 h-16 border-b border-gray-100 flex-shrink-0">
+                <div class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                    <Icon name="lucide:shield-check" class="text-white" style="font-size:1rem" />
                 </div>
                 <div>
-                    <span class="text-base font-bold text-gray-900">Admin Panel</span>
-                    <p class="text-xs text-gray-400 leading-none mt-0.5">NoteApp</p>
+                    <p class="text-sm font-bold text-gray-900 leading-tight">Admin Panel</p>
+                    <p class="text-[10px] text-gray-400 font-medium">NoteApp Platform</p>
                 </div>
             </div>
 
-            <nav class="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
+            <!-- Nav -->
+            <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+                <p class="px-3 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Navigation</p>
                 <NuxtLink v-for="item in navItems" :key="item.to" :to="item.to"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group"
                     :class="isActiveRoute(item.to, item.exact)
-                        ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'" @click="sidebarOpen = false">
-                    <div
-                        :class="['w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors', isActiveRoute(item.to, item.exact) ? 'bg-emerald-600 text-white shadow-sm' : 'bg-gray-100 text-gray-500']">
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'"
+                    @click="sidebarOpen = false">
+                    <div :class="['w-6 h-6 flex items-center justify-center flex-shrink-0',
+                        isActiveRoute(item.to, item.exact) ? 'text-white' : 'text-gray-400 group-hover:text-gray-600']">
                         <Icon :name="item.icon" style="font-size:0.9rem" />
                     </div>
-                    {{ item.label }}
+                    <span class="flex-1">{{ item.label }}</span>
+                    <Icon v-if="isActiveRoute(item.to, item.exact)" name="lucide:chevron-right"
+                        class="text-white/60 text-xs flex-shrink-0" />
                 </NuxtLink>
             </nav>
 
-            <!-- User info + logout -->
-            <div class="px-3 py-4 border-t border-gray-100">
-                <div class="flex items-center gap-3 px-2 py-2 mb-1 rounded-xl bg-gray-50">
-                    <div
-                        class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+            <!-- User footer -->
+            <div class="px-3 py-4 border-t border-gray-100 flex-shrink-0">
+                <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50 border border-gray-100 mb-2">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
                         {{ user?.name?.charAt(0)?.toUpperCase() }}
                     </div>
-                    <div class="flex-1 overflow-hidden">
-                        <p class="text-sm font-semibold text-gray-900 truncate">{{ user?.name }}</p>
-                        <p class="text-xs text-gray-400 truncate">{{ user?.email }}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ user?.name }}</p>
+                        <p class="text-[10px] text-gray-400 truncate">{{ user?.email }}</p>
                     </div>
-                    <span
-                        class="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium flex-shrink-0">Admin</span>
+                    <span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">ADM</span>
                 </div>
                 <button @click="logout"
-                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors mt-1">
-                    <Icon name="lucide:log-out" style="font-size:1rem" />
+                    class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors font-medium">
+                    <Icon name="lucide:log-out" style="font-size:0.9rem" />
                     Sign Out
                 </button>
             </div>
         </aside>
 
         <!-- Overlay for mobile -->
-        <div v-if="sidebarOpen" class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
+        <div v-if="sidebarOpen" class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden"
             @click="sidebarOpen = false" />
 
         <!-- Main content -->
         <div class="flex-1 flex flex-col overflow-hidden min-w-0">
-            <!-- Topbar (always visible) -->
-            <header
-                class="flex items-center justify-between px-4 md:px-6 py-3 bg-white border-b border-gray-100 shadow-sm flex-shrink-0">
-                <!-- Left: hamburger (mobile) + breadcrumb -->
+            <!-- Topbar -->
+            <header class="flex items-center justify-between px-4 md:px-6 h-16 bg-white border-b border-gray-100 flex-shrink-0">
+                <!-- Left -->
                 <div class="flex items-center gap-3">
                     <button @click="sidebarOpen = true"
                         class="md:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors">
-                        <Icon name="lucide:menu" class="text-gray-700" style="font-size:1.25rem" />
+                        <Icon name="lucide:menu" class="text-gray-700" style="font-size:1.1rem" />
                     </button>
-                    <div class="hidden md:flex items-center gap-2 text-sm">
-                        <Icon name="lucide:layout-dashboard" class="text-gray-400" />
-                        <span class="text-gray-400">Admin</span>
+                    <!-- Breadcrumb -->
+                    <div class="hidden md:flex items-center gap-1.5 text-sm">
+                        <span class="text-gray-400 font-medium">Admin</span>
                         <Icon name="lucide:chevron-right" class="text-gray-300 text-xs" />
-                        <span class="text-gray-700 font-semibold">{{ currentPageTitle }}</span>
+                        <span class="font-semibold text-gray-800">{{ currentPageTitle }}</span>
                     </div>
                     <div class="md:hidden flex items-center gap-2">
-                        <div
-                            class="w-7 h-7 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-lg flex items-center justify-center">
+                        <div class="w-7 h-7 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-lg flex items-center justify-center">
                             <Icon name="lucide:shield-check" class="text-white text-sm" />
                         </div>
-                        <span class="font-bold text-gray-900">Admin Panel</span>
+                        <span class="font-bold text-gray-900 text-sm">Admin Panel</span>
                     </div>
                 </div>
 
                 <!-- Right: profile dropdown -->
                 <div class="relative" ref="profileDropdownRef">
                     <button @click="profileOpen = !profileOpen"
-                        class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all">
-                        <div
-                            class="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                        class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-gray-50 border border-gray-200 transition-all">
+                        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                             {{ user?.name?.charAt(0)?.toUpperCase() }}
                         </div>
-                        <span class="hidden sm:block text-sm font-semibold text-gray-700 max-w-[120px] truncate">{{
-                            user?.name }}</span>
-                        <Icon name="lucide:chevron-down" class="text-gray-400 text-xs transition-transform"
+                        <span class="hidden sm:block text-sm font-semibold text-gray-700 max-w-[120px] truncate">{{ user?.name }}</span>
+                        <Icon name="lucide:chevron-down" class="text-gray-400 text-xs transition-transform duration-200"
                             :class="profileOpen ? 'rotate-180' : ''" />
                     </button>
 
                     <!-- Dropdown -->
-                    <div v-if="profileOpen"
-                        class="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-2xl shadow-xl py-1 z-50">
-                        <div class="px-4 py-3 border-b border-gray-100">
-                            <p class="text-sm font-semibold text-gray-900 truncate">{{ user?.name }}</p>
-                            <p class="text-xs text-gray-400 truncate mt-0.5">{{ user?.email }}</p>
-                            <span
-                                class="mt-1.5 inline-block text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">Admin</span>
+                    <Transition enter-active-class="transition duration-150 ease-out" enter-from-class="opacity-0 scale-95 -translate-y-1" enter-to-class="opacity-100 scale-100 translate-y-0" leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100 scale-100 translate-y-0" leave-to-class="opacity-0 scale-95 -translate-y-1">
+                        <div v-if="profileOpen"
+                            class="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden z-50">
+                            <div class="px-4 py-3 bg-gradient-to-br from-emerald-50 to-white border-b border-gray-100">
+                                <p class="text-sm font-bold text-gray-900 truncate">{{ user?.name }}</p>
+                                <p class="text-xs text-gray-400 truncate mt-0.5">{{ user?.email }}</p>
+                                <span class="mt-1.5 inline-block text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">Administrator</span>
+                            </div>
+                            <div class="p-1">
+                                <button @click="logout"
+                                    class="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors rounded-xl font-medium">
+                                    <Icon name="lucide:log-out" class="text-base" />
+                                    Sign Out
+                                </button>
+                            </div>
                         </div>
-                        <button @click="logout"
-                            class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                            <Icon name="lucide:log-out" class="text-base" />
-                            Sign Out
-                        </button>
-                    </div>
+                    </Transition>
                 </div>
             </header>
 

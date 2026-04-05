@@ -67,6 +67,7 @@ onMounted(loadProfile);
 
         <!-- Page Header -->
         <div class="mb-7">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">User Panel</p>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">My Profile</h1>
             <p class="text-gray-500 text-sm mt-1">Manage your account information and interests</p>
         </div>
@@ -153,9 +154,9 @@ onMounted(loadProfile);
             </div>
 
             <!-- Actions -->
-            <div class="flex justify-end gap-3">
+            <div class="flex justify-end gap-3 pt-2">
                 <Button type="button" label="Reset" text class="!rounded-xl" @click="loadProfile" />
-                <Button type="submit" label="Save Changes" :loading="isSaving" class="!rounded-xl" />
+                <Button type="submit" label="Save Changes" :loading="isSaving" class="!rounded-xl !shadow-sm" />
             </div>
         </form>
     </div>

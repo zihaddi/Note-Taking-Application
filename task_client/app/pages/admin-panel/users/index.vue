@@ -115,15 +115,15 @@ onMounted(fetchUsers);
         <Toast />
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
-                <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-1">
-                    <Icon name="lucide:users" class="text-sm" /> User Management
-                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">User Management</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Users</h1>
-                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">{{ meta.total }} total users</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> total users
+                </p>
             </div>
-            <Button label="Add User" icon="pi pi-user-plus" @click="openCreate" class="!rounded-xl" />
+            <Button label="Add User" icon="pi pi-user-plus" @click="openCreate" class="!rounded-xl !shadow-sm" />
         </div>
 
         <!-- Search -->
@@ -134,70 +134,64 @@ onMounted(fetchUsers);
             </IconField>
         </div>
 
-        <!-- Table -->
-        <div class="card">
-            <div v-if="isLoading" class="space-y-3">
+        <!-- Table card -->
+        <div class="card !p-0 overflow-hidden">
+            <div v-if="isLoading" class="p-6 space-y-3">
                 <Skeleton v-for="i in 8" :key="i" height="3rem" class="rounded-xl" />
             </div>
 
-            <div v-else-if="users.length === 0" class="empty-state">
-                <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <div v-else-if="users.length === 0" class="empty-state py-16">
+                <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <Icon name="lucide:users" class="text-gray-400" style="font-size:1.5rem" />
                 </div>
-                <p class="text-sm font-medium text-gray-500">No users found</p>
+                <p class="text-sm font-semibold text-gray-500">No users found</p>
+                <p class="text-xs text-gray-400 mt-1">Try adjusting your search</p>
             </div>
 
             <div v-else class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="data-table">
                     <thead>
-                        <tr class="text-left border-b border-gray-100">
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">User</th>
-                            <th
-                                class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">
-                                Email</th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Role</th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status
-                            </th>
-                            <th class="pb-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                        <tr>
+                            <th>User</th>
+                            <th class="hidden sm:table-cell">Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="user in users" :key="user._id"
-                            class="border-b border-gray-50 hover:bg-gray-50/70 transition-colors group">
-                            <td class="py-3 pr-4">
+                        <tr v-for="user in users" :key="user._id">
+                            <td>
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
                                         {{ user.name?.charAt(0)?.toUpperCase() }}
                                     </div>
-                                    <span class="font-semibold text-gray-900">{{ user.name }}</span>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 text-sm">{{ user.name }}</p>
+                                        <p class="text-xs text-gray-400 sm:hidden">{{ user.email }}</p>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="py-3 pr-4 text-gray-500 hidden sm:table-cell">{{ user.email }}</td>
-                            <td class="py-3 pr-4">
-                                <span :class="['badge', user.role === 'admin' ? 'badge-purple' : 'badge-blue']">{{
-                                    user.role }}</span>
+                            <td class="text-gray-500 text-sm hidden sm:table-cell">{{ user.email }}</td>
+                            <td>
+                                <span :class="['badge', user.role === 'admin' ? 'badge-purple' : 'badge-blue']">{{ user.role }}</span>
                             </td>
-                            <td class="py-3 pr-4">
-                                <span :class="['badge', user.status === 'active' ? 'badge-green' : 'badge-red']">{{
-                                    user.status || 'active' }}</span>
+                            <td>
+                                <div class="flex items-center gap-1.5">
+                                    <div :class="['w-1.5 h-1.5 rounded-full flex-shrink-0', user.status === 'active' ? 'bg-green-500' : 'bg-red-400']" />
+                                    <span :class="['badge', user.status === 'active' ? 'badge-green' : 'badge-red']">{{ user.status || 'active' }}</span>
+                                </div>
                             </td>
-                            <td class="py-3">
-                                <div class="flex gap-1">
-                                    <button @click="openEdit(user)"
-                                        class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-gray-400 transition-colors"
-                                        title="Edit">
+                            <td>
+                                <div class="flex gap-1.5">
+                                    <button @click="openEdit(user)" class="action-btn-edit" title="Edit">
                                         <Icon name="lucide:pencil" class="text-xs" />
                                     </button>
-                                    <button @click="handleDelete(user)"
-                                        class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-50 hover:text-red-600 flex items-center justify-center text-gray-400 transition-colors"
-                                        title="Delete">
+                                    <button @click="handleDelete(user)" class="action-btn-delete" title="Delete">
                                         <Icon name="lucide:trash-2" class="text-xs" />
                                     </button>
                                     <NuxtLink :to="`/admin-panel/users/${user._id}/posts`">
-                                        <button
-                                            class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-600 flex items-center justify-center text-gray-400 transition-colors"
-                                            title="View posts">
+                                        <button class="action-btn-view" title="View posts">
                                             <Icon name="lucide:newspaper" class="text-xs" />
                                         </button>
                                     </NuxtLink>
@@ -209,7 +203,7 @@ onMounted(fetchUsers);
             </div>
 
             <!-- Pagination -->
-            <div v-if="meta && meta.last_page > 1" class="flex justify-center mt-5">
+            <div v-if="meta && meta.last_page > 1" class="flex justify-center px-6 py-4 border-t border-gray-100">
                 <Paginator :rows="perPage" :totalRecords="meta.total" :first="(meta.current_page - 1) * perPage"
                     @page="(e: any) => { page = e.page + 1; fetchUsers(); }" />
             </div>
@@ -230,7 +224,7 @@ onMounted(fetchUsers);
                     </div>
                     <div>
                         <label class="form-label">Password {{ isEditing ? '(leave blank to keep)' : '*' }}</label>
-                        <Password v-model="form.password" class="form-input" :feedback="false" toggleMask />
+                        <Password v-model="form.password" class="w-full" inputClass="form-input w-full" :feedback="false" toggleMask />
                     </div>
                     <div>
                         <label class="form-label">Phone</label>

@@ -24,6 +24,13 @@ class BaseRepository {
     }
 
     /**
+     * Alias for find() — preferred name used by service layer.
+     */
+    async findById(id, projection = {}) {
+        return this.find(id, projection)
+    }
+
+    /**
      * Find a document by _id or throw a 404-like error.
      */
     async findOrFail(id) {

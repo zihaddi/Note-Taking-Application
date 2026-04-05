@@ -167,6 +167,19 @@ class NoteController {
             )
         }
     }
+    async adminShow(req, res) {
+        try {
+            const note = await noteService.getAnyNote(req.params.id)
+            return ApiResponse.success(res, "Note retrieved successfully", note)
+        } catch (err) {
+            return ApiResponse.error(
+                res,
+                err.message,
+                null,
+                err.statusCode || 500,
+            )
+        }
+    }
 }
 
 module.exports = new NoteController()

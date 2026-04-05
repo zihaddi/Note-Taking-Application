@@ -81,6 +81,19 @@ class AuthController {
         }
     }
 
+    async myPermissions(req, res) {
+        try {
+            const Role = require("../role/role.model")
+            const role = await Role.findOne({slug: req.user.role})
+                .populate("permissions", "slug")
+                .lean()
+            const slugs = role ? role.permissions.map((p) => p.slug) : []
+            return ApiResponse.success(res, "Permissions retrieved", slugs)
+        } catch (err) {
+            return ApiResponse.error(res, err.message, null, 500)
+        }
+    }
+
     async logout(req, res) {
         return ApiResponse.success(res, "Logged out successfully")
     }

@@ -39,15 +39,14 @@ onMounted(fetchPosts);
         <Toast />
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
-                <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-1">
-                    <Icon name="lucide:newspaper" class="text-sm" /> Posts
-                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Content</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">All Posts</h1>
-                <p class="text-gray-500 text-sm mt-0.5">Read-only view of all user posts</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> total posts
+                </p>
             </div>
-            <span v-if="meta" class="badge badge-gray text-sm px-3 py-1">{{ meta.total }} total</span>
         </div>
 
         <!-- Search -->
@@ -62,19 +61,19 @@ onMounted(fetchPosts);
             <Skeleton v-for="i in 8" :key="i" height="6rem" class="rounded-2xl" />
         </div>
 
-        <div v-else-if="posts.length === 0" class="empty-state">
-            <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <div v-else-if="posts.length === 0" class="empty-state py-16">
+            <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Icon name="lucide:newspaper" class="text-gray-400" style="font-size:1.5rem" />
             </div>
-            <p class="text-sm font-medium text-gray-500">No posts found</p>
+            <p class="text-sm font-semibold text-gray-500">No posts found</p>
         </div>
 
         <div v-else class="space-y-3">
-            <div v-for="post in posts" :key="post._id" class="card group">
+            <div v-for="post in posts" :key="post._id" class="card group transition-all hover:shadow-md">
                 <div class="flex items-start justify-between gap-4">
-                    <div class="flex-1 min-w-0">
+                    <NuxtLink :to="`/admin-panel/posts/${post._id}`" class="flex-1 min-w-0 cursor-pointer">
                         <div class="flex items-center gap-2 mb-1.5">
-                            <h3 class="font-semibold text-gray-900 truncate">{{ post.title }}</h3>
+                            <h3 class="font-semibold text-gray-900 truncate group-hover:text-emerald-700 transition-colors">{{ post.title }}</h3>
                             <span :class="['badge flex-shrink-0', post.is_published ? 'badge-green' : 'badge-gray']">
                                 {{ post.is_published ? 'Published' : 'Draft' }}
                             </span>
@@ -83,21 +82,19 @@ onMounted(fetchPosts);
                         <div class="flex flex-wrap gap-1">
                             <span v-for="tag in post.tags" :key="tag" class="badge badge-blue">{{ tag }}</span>
                         </div>
-                    </div>
+                    </NuxtLink>
                     <NuxtLink :to="`/admin-panel/users/${post.userId?._id}/posts`">
-                        <button
-                            class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-600 flex items-center justify-center text-gray-400 transition-colors flex-shrink-0"
-                            title="View author">
+                        <button class="action-btn-view" title="View author">
                             <Icon name="lucide:user" class="text-xs" />
                         </button>
                     </NuxtLink>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-gray-100 flex items-center gap-2">
                     <div
-                        class="w-5 h-5 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                        class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                         {{ post.userId?.name?.charAt(0)?.toUpperCase() || '?' }}
                     </div>
-                    <span class="text-xs font-semibold text-gray-600">{{ post.userId?.name || 'Unknown' }}</span>
+                    <span class="text-xs font-semibold text-gray-700">{{ post.userId?.name || 'Unknown' }}</span>
                     <span class="text-xs text-gray-400 ml-auto">{{ post.userId?.email }}</span>
                 </div>
             </div>

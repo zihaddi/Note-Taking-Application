@@ -5,6 +5,7 @@ definePageMeta({ middleware: ['auth-user'], layout: 'user' });
 import { timeAgo } from '~/utils/helpers';
 
 const { getUserNotes, createNote, updateNote, deleteNote } = useNotesApi();
+const { can, loadPermissions, isLoaded } = usePermissions();
 const toast = useToast();
 
 // List state
@@ -31,6 +32,7 @@ const deleteTarget = ref<any | null>(null);
 const responseModal = ref<{ status?: boolean; message?: string } | null>(null);
 
 async function fetchNotes() {
+    if (!can('notes.view')) return;
     isLoading.value = true;
     try {
         const res: any = await getUserNotes({ page: page.value, per_page: perPage, search: search.value });
@@ -112,7 +114,10 @@ watch(search, () => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => { page.value = 1; fetchNotes(); }, 400);
 });
-onMounted(fetchNotes);
+onMounted(async () => {
+    await loadPermissions();
+    fetchNotes();
+});
 </script>
 
 <template>
@@ -120,12 +125,15 @@ onMounted(fetchNotes);
         <Toast />
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">User Panel</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">My Notes</h1>
-                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">{{ meta.total }} notes total</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> notes total
+                </p>
             </div>
-            <Button label="New Note" icon="pi pi-plus" @click="openCreate" class="!rounded-xl" />
+            <Button v-if="can('notes.create')" label="New Note" icon="pi pi-plus" @click="openCreate" class="!rounded-xl !shadow-sm" />
         </div>
 
         <!-- Search -->
@@ -134,6 +142,15 @@ onMounted(fetchNotes);
                 <InputIcon class="pi pi-search" />
                 <InputText v-model="search" placeholder="Search notes..." class="w-full !rounded-xl" />
             </IconField>
+        </div>
+
+        <!-- Access denied -->
+        <div v-if="isLoaded && !can('notes.view')" class="empty-state">
+            <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Icon name="lucide:lock" class="text-red-400" style="font-size:1.75rem" />
+            </div>
+            <p class="text-base font-semibold text-gray-600">Access Restricted</p>
+            <p class="text-sm text-gray-400 mt-1">You don't have permission to view notes.</p>
         </div>
 
         <!-- Loading -->
@@ -152,8 +169,9 @@ onMounted(fetchNotes);
 
         <!-- Notes grid -->
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="note in notes" :key="note._id" class="card group relative cursor-pointer flex flex-col"
-                :class="note.is_pinned ? 'ring-1 ring-emerald-200 ring-offset-0' : ''">
+            <div v-for="note in notes" :key="note._id" class="card group relative cursor-pointer flex flex-col transition-all hover:shadow-md"
+                :class="note.is_pinned ? 'ring-1 ring-emerald-200 ring-offset-0' : ''"
+                @click="$router.push(`/user-panel/notes/${note._id}`)">
                 <!-- Pinned band -->
                 <div v-if="note.is_pinned"
                     class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
@@ -172,13 +190,11 @@ onMounted(fetchNotes);
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                     <span class="text-xs text-gray-400">{{ timeAgo(note.createdAt) }}</span>
-                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button @click.stop="openEdit(note)"
-                            class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-gray-500 transition-colors">
+                    <div v-if="can('notes.update') || can('notes.delete')" class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button v-if="can('notes.update')" @click.stop="openEdit(note)" class="action-btn-edit">
                             <Icon name="lucide:pencil" class="text-xs" />
                         </button>
-                        <button @click.stop="handleDelete(note)"
-                            class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-50 hover:text-red-600 flex items-center justify-center text-gray-500 transition-colors">
+                        <button v-if="can('notes.delete')" @click.stop="handleDelete(note)" class="action-btn-delete">
                             <Icon name="lucide:trash-2" class="text-xs" />
                         </button>
                     </div>

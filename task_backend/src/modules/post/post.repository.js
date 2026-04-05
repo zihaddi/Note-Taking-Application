@@ -83,6 +83,15 @@ class PostRepository extends BaseRepository {
     }
 
     /**
+     * Find a published post by ID with userId populated.
+     */
+    async findByIdPopulated(postId) {
+        return Post.findById(postId)
+            .populate("userId", "name email")
+            .lean()
+    }
+
+    /**
      * Aggregation Scenario 2 — Retrieve all posts belonging to a particular user.
      */
     async getUserPostsWithLookup(userId) {

@@ -157,15 +157,15 @@ onMounted(fetchItems);
         <Toast />
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
-                <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-1">
-                    <Icon name="lucide:menu" class="text-sm" /> Navigation
-                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Navigation</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Menu Manager</h1>
-                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">{{ meta.total }} total items</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> total items
+                </p>
             </div>
-            <Button label="Add Item" icon="pi pi-plus" @click="openCreate" class="!rounded-xl" />
+            <Button label="Add Item" icon="pi pi-plus" @click="openCreate" class="!rounded-xl !shadow-sm" />
         </div>
 
         <!-- Search -->
@@ -176,79 +176,72 @@ onMounted(fetchItems);
             </IconField>
         </div>
 
-        <!-- Table -->
-        <div class="card">
-            <div v-if="isLoading" class="space-y-3">
+        <!-- Table card -->
+        <div class="card !p-0 overflow-hidden">
+            <div v-if="isLoading" class="p-6 space-y-3">
                 <Skeleton v-for="i in 8" :key="i" height="3rem" class="rounded-xl" />
             </div>
 
-            <div v-else-if="items.length === 0" class="empty-state">
-                <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <div v-else-if="items.length === 0" class="empty-state py-16">
+                <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <Icon name="lucide:menu" class="text-gray-400" style="font-size:1.5rem" />
                 </div>
-                <p class="text-sm font-medium text-gray-500">No menu items found</p>
+                <p class="text-sm font-semibold text-gray-500">No menu items found</p>
             </div>
 
             <div v-else class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="data-table">
                     <thead>
-                        <tr class="text-left border-b border-gray-100">
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Label</th>
-                            <th
-                                class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">
-                                Path</th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Section
-                            </th>
-                            <th
-                                class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">
-                                Roles</th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Order</th>
-                            <th class="pb-3 pr-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Active
-                            </th>
-                            <th class="pb-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                        <tr>
+                            <th>Label</th>
+                            <th class="hidden md:table-cell">Path</th>
+                            <th>Section</th>
+                            <th class="hidden sm:table-cell">Roles</th>
+                            <th>Order</th>
+                            <th>Active</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in items" :key="item._id"
-                            class="border-b border-gray-50 hover:bg-gray-50/70 transition-colors group">
-                            <td class="py-3 pr-4">
-                                <div class="flex items-center gap-2">
-                                    <Icon :name="item.icon || 'lucide:circle'"
-                                        class="text-gray-400 text-sm flex-shrink-0" />
-                                    <span class="font-semibold text-gray-900">{{ item.label }}</span>
+                        <tr v-for="item in items" :key="item._id">
+                            <td>
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0">
+                                        <Icon :name="item.icon || 'lucide:circle'" class="text-gray-500 text-sm" />
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">{{ item.label }}</span>
                                 </div>
                             </td>
-                            <td class="py-3 pr-4 text-gray-400 font-mono text-xs hidden md:table-cell">{{ item.path }}
+                            <td class="hidden md:table-cell">
+                                <code class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg font-mono">{{ item.path }}</code>
                             </td>
-                            <td class="py-3 pr-4">
+                            <td>
                                 <span class="badge badge-gray">{{ item.section }}</span>
                             </td>
-                            <td class="py-3 pr-4 hidden sm:table-cell">
+                            <td class="hidden sm:table-cell">
                                 <div class="flex flex-wrap gap-1" v-if="item.roles.length">
-                                    <span v-for="role in item.roles" :key="role" class="badge badge-purple">{{ role
-                                        }}</span>
+                                    <span v-for="role in item.roles" :key="role" class="badge badge-purple">{{ role }}</span>
                                 </div>
-                                <span v-else class="text-xs text-gray-400">all</span>
+                                <span v-else class="text-xs text-gray-400">all roles</span>
                             </td>
-                            <td class="py-3 pr-4 text-gray-500 text-xs">{{ item.order }}</td>
-                            <td class="py-3 pr-4">
-                                <button @click="toggleActive(item)" :class="['w-8 h-4 rounded-full transition-colors relative',
-                                    item.isActive ? 'bg-emerald-500' : 'bg-gray-200']"
+                            <td>
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-gray-100 text-gray-600 text-xs font-bold">{{ item.order }}</span>
+                            </td>
+                            <td>
+                                <button @click="toggleActive(item)"
+                                    :class="['relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none',
+                                        item.isActive ? 'bg-emerald-500' : 'bg-gray-300']"
                                     :title="item.isActive ? 'Active — click to deactivate' : 'Inactive — click to activate'">
-                                    <span :class="['absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform shadow-sm',
-                                        item.isActive ? 'translate-x-4' : 'translate-x-0.5']"></span>
+                                    <span :class="['pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform transition duration-200',
+                                        item.isActive ? 'translate-x-4' : 'translate-x-0']"></span>
                                 </button>
                             </td>
-                            <td class="py-3">
-                                <div class="flex gap-1">
-                                    <button @click="openEdit(item)"
-                                        class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-gray-400 transition-colors"
-                                        title="Edit">
+                            <td>
+                                <div class="flex gap-1.5">
+                                    <button @click="openEdit(item)" class="action-btn-edit" title="Edit">
                                         <Icon name="lucide:pencil" class="text-xs" />
                                     </button>
-                                    <button @click="handleDelete(item)"
-                                        class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-50 hover:text-red-600 flex items-center justify-center text-gray-400 transition-colors"
-                                        title="Delete">
+                                    <button @click="handleDelete(item)" class="action-btn-delete" title="Delete">
                                         <Icon name="lucide:trash-2" class="text-xs" />
                                     </button>
                                 </div>
@@ -259,7 +252,7 @@ onMounted(fetchItems);
             </div>
 
             <!-- Pagination -->
-            <div v-if="meta && meta.last_page > 1" class="flex justify-center mt-5">
+            <div v-if="meta && meta.last_page > 1" class="flex justify-center px-6 py-4 border-t border-gray-100">
                 <Paginator :rows="perPage" :totalRecords="meta.total" :first="(meta.current_page - 1) * perPage"
                     @page="(e: any) => { page = e.page + 1; fetchItems(); }" />
             </div>

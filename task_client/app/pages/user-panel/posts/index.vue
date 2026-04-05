@@ -5,9 +5,14 @@ definePageMeta({ middleware: ['auth-user'], layout: 'user' });
 import { timeAgo } from '~/utils/helpers';
 
 const { getPublicPosts, getMyPosts, createPost, updatePost, deletePost } = usePostsApi();
+const { can, loadPermissions, isLoaded } = usePermissions();
 const toast = useToast();
 
-const activeTab = ref<'all' | 'mine'>('all');
+const activeTab = ref<'all' | 'mine'>('mine');
+const tabs = computed(() => [
+    ...(can('posts.view') ? [{ key: 'mine', label: 'My Posts' }] : []),
+    { key: 'all', label: 'All Posts' },
+]);
 const posts = ref<any[]>([]);
 const meta = ref<any>(null);
 const isLoading = ref(false);
@@ -37,6 +42,11 @@ async function fetchPosts() {
             : await getMyPosts(params);
         posts.value = res?.data?.data || [];
         meta.value = res?.data?.meta || null;
+        // Auto-switch to All Posts if My Posts is empty
+        if (activeTab.value === 'mine' && posts.value.length === 0) {
+            activeTab.value = 'all';
+            return;
+        }
     } catch (err: any) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load posts', life: 3000 });
     } finally {
@@ -45,6 +55,12 @@ async function fetchPosts() {
 }
 
 watch(activeTab, () => { page.value = 1; fetchPosts(); });
+
+let searchTimer: ReturnType<typeof setTimeout>;
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => { page.value = 1; fetchPosts(); }, 400);
+});
 
 function openCreate() {
     isEditing.value = false;
@@ -107,18 +123,24 @@ async function confirmDelete() {
     }
 }
 
-onMounted(fetchPosts);
+onMounted(async () => {
+    await loadPermissions();
+    fetchPosts();
+});
 </script>
 
 <template>
     <div>
         <Toast />
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-7">
             <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">User Panel</p>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Posts</h1>
-                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">{{ meta.total }} posts total</p>
+                <p class="text-gray-500 text-sm mt-0.5" v-if="meta">
+                    <span class="font-semibold text-gray-700">{{ meta.total }}</span> posts total
+                </p>
             </div>
-            <Button label="New Post" icon="pi pi-plus" @click="openCreate" class="!rounded-xl" />
+            <Button v-if="can('posts.create')" label="New Post" icon="pi pi-plus" @click="openCreate" class="!rounded-xl !shadow-sm" />
         </div>
 
         <!-- Search -->
@@ -132,7 +154,7 @@ onMounted(fetchPosts);
         <!-- Tabs -->
         <!-- Tabs -->
         <div class="flex gap-1 bg-gray-100 rounded-xl p-1 mb-5 w-fit">
-            <button v-for="tab in [{ key: 'all', label: 'All Posts' }, { key: 'mine', label: 'My Posts' }]"
+            <button v-for="tab in tabs"
                 :key="tab.key" @click="activeTab = tab.key as any"
                 :class="['px-4 py-2 text-sm font-semibold rounded-lg transition-all', activeTab === tab.key ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-500 hover:text-gray-700']">
                 {{ tab.label }}
@@ -152,9 +174,9 @@ onMounted(fetchPosts);
         </div>
 
         <div v-else class="space-y-3">
-            <div v-for="post in posts" :key="post._id" class="card group">
+            <div v-for="post in posts" :key="post._id" class="card group transition-all hover:shadow-md">
                 <div class="flex items-start justify-between gap-4">
-                    <div class="flex-1 min-w-0">
+                    <NuxtLink :to="`/user-panel/posts/${post._id}`" class="flex-1 min-w-0 cursor-pointer">
                         <div class="flex items-center gap-2 mb-1.5">
                             <h3 class="font-semibold text-gray-900 truncate">{{ post.title }}</h3>
                             <span
@@ -165,14 +187,12 @@ onMounted(fetchPosts);
                         <div class="flex flex-wrap gap-1">
                             <span v-for="tag in post.tags" :key="tag" class="badge badge-blue">{{ tag }}</span>
                         </div>
-                    </div>
-                    <div v-if="activeTab === 'mine'" class="flex gap-1 flex-shrink-0">
-                        <button @click="openEdit(post)"
-                            class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-gray-500 transition-colors">
+                    </NuxtLink>
+                    <div v-if="activeTab === 'mine' && (can('posts.update') || can('posts.delete'))" class="flex gap-1.5 flex-shrink-0">
+                        <button v-if="can('posts.update')" @click="openEdit(post)" class="action-btn-edit">
                             <Icon name="lucide:pencil" class="text-xs" />
                         </button>
-                        <button @click="handleDelete(post)"
-                            class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-50 hover:text-red-600 flex items-center justify-center text-gray-500 transition-colors">
+                        <button v-if="can('posts.delete')" @click="handleDelete(post)" class="action-btn-delete">
                             <Icon name="lucide:trash-2" class="text-xs" />
                         </button>
                     </div>

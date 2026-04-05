@@ -51,6 +51,10 @@ export const useNotesApi = () => {
         })
     }
 
+    async function adminGetNote(id: string): Promise<ApiResponse<Note>> {
+        return $fetchApi(`${ADMIN_BASE}/${id}`, { method: "GET" })
+    }
+
     return {
         getUserNotes,
         getNote,
@@ -58,5 +62,7 @@ export const useNotesApi = () => {
         updateNote,
         deleteNote,
         adminGetAllNotes,
+        adminGetNote,
     }
+    
 }

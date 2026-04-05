@@ -3,7 +3,7 @@
 const {Router} = require("express")
 const {body, param} = require("express-validator")
 const {authenticate} = require("../../middleware/authenticate")
-const {requireUser} = require("../../middleware/authorize")
+const {requireUser, requirePermission} = require("../../middleware/authorize")
 const {validate} = require("../../middleware/validate")
 const postController = require("./post.controller")
 
@@ -19,7 +19,7 @@ router.get(
 )
 
 // ── Authenticated user routes
-router.get("/user/posts", authenticate, requireUser, (req, res) =>
+router.get("/user/posts", authenticate, requireUser, requirePermission("posts.view"), (req, res) =>
     postController.userIndex(req, res),
 )
 
@@ -27,6 +27,7 @@ router.post(
     "/user/posts",
     authenticate,
     requireUser,
+    requirePermission("posts.create"),
     [
         body("title").notEmpty().withMessage("Title is required").trim(),
         body("content").notEmpty().withMessage("Content is required"),
@@ -44,6 +45,7 @@ router.put(
     "/user/posts/:id",
     authenticate,
     requireUser,
+    requirePermission("posts.update"),
     [
         param("id").isMongoId().withMessage("Invalid post ID"),
         body("title")
@@ -64,6 +66,7 @@ router.delete(
     "/user/posts/:id",
     authenticate,
     requireUser,
+    requirePermission("posts.delete"),
     [param("id").isMongoId().withMessage("Invalid post ID"), validate],
     (req, res) => postController.destroy(req, res),
 )
